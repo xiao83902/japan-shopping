@@ -4,22 +4,18 @@ A mobile-first travel expense tracker for Japan trips. Take or upload a receipt 
 
 ## Live URL
 
-Target custom domain:
-
 https://japan-shopping.0902.one/
 
-The app is configured for GitHub Pages through `CNAME` and `.github/workflows/pages.yml`. The URL will work after the DNS record below is added and GitHub Pages finishes issuing HTTPS.
+## Deployment
 
-## DNS setup for 0902.one
+This repository is published with GitHub Pages from the `main` branch at `/ (root)`.
 
-Create this DNS record in Cloudflare for the custom domain:
+The custom domain is configured by:
 
-- Type: `CNAME`
-- Name: `japan-shopping`
-- Target: `xiao83902.github.io`
-- Proxy status: DNS only
-
-GitHub Pages will issue the HTTPS certificate after DNS resolves.
+- `CNAME` in this repository: `japan-shopping.0902.one`
+- Cloudflare DNS: `CNAME japan-shopping -> xiao83902.github.io`
+- Cloudflare proxy status: DNS only
+- GitHub Pages HTTPS enforcement enabled
 
 ## Features
 
