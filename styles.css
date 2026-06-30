@@ -343,7 +343,9 @@ svg {
 
 .btn,
 .icon,
-.primary {
+.primary,
+.tool-button,
+.quiet-action {
   min-height: 42px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -373,7 +375,9 @@ svg {
 
 .btn:hover,
 .icon:hover,
-.page-action:hover {
+.page-action:hover,
+.tool-button:hover,
+.quiet-action:hover {
   border-color: var(--line-strong);
   background: var(--surface);
   transform: translateY(-1px);
@@ -382,7 +386,9 @@ svg {
 .btn:active,
 .icon:active,
 .primary:active,
-.page-action:active {
+.page-action:active,
+.tool-button:active,
+.quiet-action:active {
   transform: translateY(1px);
 }
 
@@ -406,6 +412,50 @@ svg {
   min-height: 44px;
   padding: 0 15px;
   white-space: nowrap;
+}
+
+.tool-button,
+.quiet-action {
+  min-height: 38px;
+  padding: 0 11px;
+  gap: 6px;
+  background: transparent;
+  color: var(--muted);
+  border-color: transparent;
+  box-shadow: none;
+  font-size: 0.92rem;
+  font-weight: 780;
+}
+
+.tool-button svg,
+.quiet-action svg {
+  width: 17px;
+  height: 17px;
+}
+
+.tool-button:hover,
+.quiet-action:hover {
+  color: var(--ink);
+  background: rgba(255, 254, 250, 0.7);
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.quiet-action {
+  justify-self: start;
+  border-color: var(--line);
+  background: rgba(255, 254, 250, 0.42);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tool-button:hover,
+  .quiet-action:hover {
+    background: rgba(32, 39, 36, 0.86);
+  }
+
+  .quiet-action {
+    background: rgba(32, 39, 36, 0.42);
+  }
 }
 
 .danger {
@@ -838,9 +888,32 @@ select {
 }
 
 .panel-actions {
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.tool-primary {
+  min-height: 44px;
+}
+
+.tool-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 254, 250, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tool-secondary {
+    background: rgba(32, 39, 36, 0.48);
+  }
 }
 
 .items-head {
@@ -1307,14 +1380,23 @@ td input {
     width: 100%;
   }
 
-  .actions,
-  .panel-actions {
+  .actions {
     justify-content: flex-start;
     flex-wrap: wrap;
   }
 
-  .panel-actions .text {
-    flex: 1 1 142px;
+  .panel-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-secondary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .tool-button {
+    width: 100%;
   }
 
   .fields,
@@ -1329,8 +1411,7 @@ td input {
   }
 
   .tripgrid .primary,
-  .save .primary,
-  #clearFilter {
+  .save .primary {
     width: 100%;
   }
 

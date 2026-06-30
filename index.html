@@ -135,14 +135,27 @@
               spellcheck="false"
               placeholder="辨識文字會出現在這裡，可修正後重新解析。"
             ></textarea>
-            <div class="panel-actions row">
-              <button id="demo" class="icon text" type="button">
-                <i data-lucide="sparkles"></i><span>載入範例</span></button
-              ><button id="parse" class="icon text" type="button">
-                <i data-lucide="scan-text"></i><span>重新解析</span></button
-              ><button id="reset" class="icon text" type="button">
-                <i data-lucide="rotate-ccw"></i><span>重設草稿</span>
+            <div class="panel-actions">
+              <button id="parse" class="primary tool-primary" type="button">
+                <i data-lucide="scan-text"></i><span>重新解析</span>
               </button>
+              <div class="tool-secondary" aria-label="辨識輔助操作">
+                <button
+                  id="demo"
+                  class="tool-button"
+                  type="button"
+                  title="載入範例"
+                >
+                  <i data-lucide="sparkles"></i><span>範例</span></button
+                ><button
+                  id="reset"
+                  class="tool-button"
+                  type="button"
+                  title="重設草稿"
+                >
+                  <i data-lucide="rotate-ccw"></i><span>重設</span>
+                </button>
+              </div>
             </div>
           </section>
           <section class="panel edit-panel">
