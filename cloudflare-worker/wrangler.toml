@@ -1,0 +1,13 @@
+name = "japan-shopping-sync"
+main = "src/worker.js"
+compatibility_date = "2026-06-30"
+workers_dev = true
+
+routes = [
+  { pattern = "japan-shopping-sync.0902.one/*", zone_name = "0902.one" }
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "japan-shopping-sync"
+database_id = "1e29f475-88f3-4c6b-976b-564db6b33c4e"

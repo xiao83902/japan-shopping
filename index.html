@@ -1,27 +1,218 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>日本旅遊消費紀錄</title>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <style>
-    :root{--paper:#fbfaf5;--panel:#fffefa;--soft:#f8f3ea;--ink:#1f2a30;--muted:#6c757d;--line:#ded7c8;--indigo:#2f4668;--red:#c94f38;--green:#637f58;--shadow:0 16px 30px rgba(38,48,56,.08);font-family:Inter,system-ui,-apple-system,"Segoe UI","Noto Sans TC","Noto Sans JP",sans-serif}*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{min-width:320px;margin:0;color:var(--ink);letter-spacing:0;overflow-x:hidden;background:repeating-linear-gradient(90deg,rgba(47,70,104,.025) 0 1px,transparent 1px 30px),linear-gradient(180deg,var(--paper),#eef4f1)}button,input,textarea,select{font:inherit;letter-spacing:0}button{cursor:pointer}.app{min-height:100vh;display:grid;grid-template-columns:minmax(268px,292px) minmax(0,1fr);min-width:0}.side{position:sticky;top:0;height:100vh;padding:28px 18px;background:rgba(255,254,250,.94);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:18px}.side:before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:linear-gradient(180deg,var(--red),#a77b2e,var(--green))}.brand,.capture,.title,.actions,.row,.progress,.meta,.items-head{display:flex;align-items:center}.brand,.capture{gap:12px;min-width:0}.mark,.capicon,.title span{width:42px;height:42px;display:grid;place-items:center;border-radius:8px;flex:0 0 auto;background:#f4e5e1;color:var(--red);border:1px solid #ebcec8}.capicon,.title span{background:#eef4f9;color:var(--indigo);border-color:var(--line)}.brand-title{font-weight:780;overflow-wrap:anywhere}.brand-sub{color:var(--muted);font-size:.84rem;margin-top:3px}.capture{min-height:78px;border:1px solid var(--line);border-radius:8px;padding:14px;background:white;box-shadow:var(--shadow)}.capture input{position:absolute;opacity:0;pointer-events:none}.capture strong,.capture small{display:block;overflow-wrap:anywhere}.capture small{color:var(--muted);margin-top:3px}.btn,.icon,.primary{min-height:42px;border:1px solid var(--line);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 13px;background:white;color:var(--ink)}.btn{justify-content:flex-start;background:var(--soft);color:#23354f;font-weight:680}.primary{background:var(--indigo);border-color:var(--indigo);color:white;font-weight:760}.danger{color:#b9332b}.icon{width:42px;padding:0}.text{width:auto}.stats{margin-top:auto;display:grid;gap:10px}.stat{min-height:70px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;background:rgba(255,255,255,.78)}.stat:nth-child(2){border-left-color:var(--indigo)}.stat:nth-child(3){border-left-color:var(--green)}.stat small,.stat em{display:block}.stat small{font-weight:720}.stat em{color:var(--muted);font-size:.78rem;font-style:normal}.stat strong{font-size:1.25rem;text-align:right;font-variant-numeric:tabular-nums}.main{min-width:0;padding:28px}.top{justify-content:space-between;gap:16px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid rgba(207,197,180,.72)}.kicker{display:block;margin-bottom:4px;color:var(--red);font-size:.76rem;font-weight:780;text-transform:uppercase}h1,h2,h3,p{margin:0}h1{font-size:2.12rem;line-height:1.1}h2{font-size:1.05rem}.top p{color:var(--muted);margin-top:7px}.actions{gap:8px;flex-wrap:wrap}.panel,.records{background:rgba(255,254,250,.92);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:16px;min-width:0}.trip{margin-bottom:18px}.title{gap:9px;margin-bottom:12px}.grid{display:grid;gap:12px}.tripgrid{grid-template-columns:minmax(0,1.2fr) minmax(136px,.6fr) minmax(136px,.6fr) auto;align-items:end}.work{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:18px;align-items:start}.fields{grid-template-columns:1.2fr .85fr .78fr}label span{display:block;color:var(--muted);font-size:.84rem;font-weight:680;margin-bottom:7px}input,select,textarea{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;padding:8px 11px;background:#fffdf8;color:var(--ink)}input[type=number]{text-align:right;font-variant-numeric:tabular-nums}select{appearance:none;padding-right:34px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px;background-repeat:no-repeat}.summary{margin-top:12px;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fbf7ef;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline}.summary strong{margin-left:auto;color:var(--red);font-variant-numeric:tabular-nums}.status{font-weight:780;color:#23354f}.image{position:relative;min-height:350px;max-height:58vh;border:1px dashed #cfc5b4;border-radius:8px;background:#fbfcfa;overflow:hidden;display:grid;place-items:center}.image img{display:none;width:100%;height:100%;object-fit:contain}.image.has img{display:block}.image.has .empty{display:none}.empty{color:var(--muted);display:grid;gap:8px;place-items:center;text-align:center}.empty svg{width:44px;height:44px;color:var(--indigo)}.progress{gap:10px;margin:14px 0}.track{height:10px;flex:1;background:#e8e2d7;border-radius:999px;overflow:hidden}.track span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--red),var(--indigo));transition:width .18s}#progressLabel{width:48px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}.ocr{min-height:166px;resize:vertical;line-height:1.55}.panel-actions{justify-content:flex-end;gap:8px;margin-top:12px}.items-head{justify-content:space-between;margin:22px 0 10px}.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:white}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{padding:8px;border-bottom:1px solid var(--line)}th{text-align:left;color:#34434b;background:#f3eadc;font-size:.84rem}th:nth-child(2),td:nth-child(2){width:clamp(92px,22%,124px)}th:last-child,td:last-child{width:46px;text-align:center}tr:last-child td{border-bottom:0}.save{justify-content:space-between;gap:12px;margin-top:16px}#hint{color:var(--muted);text-align:right;overflow-wrap:anywhere}.records{margin-top:18px}.query{grid-template-columns:minmax(0,1.2fr) minmax(136px,.56fr) minmax(0,.8fr) auto;align-items:end;margin-bottom:14px}.daily{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px}.tile{min-height:104px;border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;padding:13px;background:white;text-align:left}.tile span{display:block}.tile .lbl{color:var(--muted);font-size:.78rem;font-weight:720}.tile .date{margin-top:7px}.tile strong{display:block;margin-top:7px;color:var(--red);font-size:1.42rem;font-variant-numeric:tabular-nums}.list{display:grid;gap:10px}.record{display:grid;grid-template-columns:minmax(0,1fr) minmax(118px,auto);gap:14px;border:1px solid var(--line);border-radius:8px;padding:14px;background:white}.store{display:flex;align-items:center;gap:9px;min-width:0}.storemark{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#f4e5e1;color:var(--red);font-size:.78rem;font-weight:780;flex:0 0 auto}.record h3{font-size:1.04rem;overflow-wrap:anywhere}.meta{flex-wrap:wrap;gap:8px 14px;margin:8px 0 0 37px;color:var(--muted);font-size:.88rem}.meta span{display:inline-flex;align-items:center;gap:5px}.meta svg{width:15px;height:15px;color:var(--green)}.lines{margin:12px 0 0 37px;padding:11px;border-radius:8px;background:#fbf7ef}.items-head{justify-content:space-between;margin:0 0 8px}.items-head span{color:var(--muted);font-size:.82rem;font-weight:760}.itemlist{display:grid;gap:6px;list-style:none;margin:0;padding:0}.itemrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:6px 0;border-top:1px solid rgba(207,197,180,.66)}.itemrow:first-child{border-top:0}.price{font-weight:720;white-space:nowrap;font-variant-numeric:tabular-nums}.more{margin-top:6px;border-top:1px solid rgba(207,197,180,.66)}.more summary{display:flex;justify-content:center;align-items:center;min-height:34px;color:var(--indigo);font-size:.86rem;font-weight:760;cursor:pointer;list-style:none}.more summary::-webkit-details-marker{display:none}.sideTotal{display:grid;justify-items:end;gap:8px;text-align:right}.sideTotal small{color:var(--muted);font-weight:720}.total{color:var(--red);font-size:1.3rem;font-weight:820;font-variant-numeric:tabular-nums}.emptyState{color:var(--muted);border:1px dashed #cfc5b4;border-radius:8px;padding:18px;text-align:center;background:rgba(255,255,255,.56)}svg{width:18px;height:18px;stroke-width:2;flex:0 0 auto}@media(max-width:1280px){.main{padding:24px}.tripgrid{grid-template-columns:minmax(0,1fr) minmax(136px,.58fr) minmax(136px,.58fr)}.tripgrid .primary{grid-column:1/-1;justify-self:end}.query{grid-template-columns:minmax(0,1fr) minmax(136px,.58fr)}}@media(max-width:1120px){.work{grid-template-columns:1fr}.image{min-height:300px}}@media(max-width:1040px){.app{grid-template-columns:1fr}.side{position:relative;height:auto;display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,.8fr);align-items:center}.stats{margin-top:0;grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr))}.tripgrid,.query{grid-template-columns:repeat(2,minmax(0,1fr))}.tripgrid .primary{grid-column:auto;justify-self:stretch}}@media(max-width:720px){.main{padding:16px}h1{font-size:1.82rem}.side{padding:18px 16px;grid-template-columns:1fr}.stats{grid-template-columns:1fr}.top,.save{align-items:stretch;flex-direction:column}.actions,.panel-actions{justify-content:flex-start;flex-wrap:wrap}.actions .text,.panel-actions .text{flex:1 1 150px}.fields,.tripgrid,.query{grid-template-columns:1fr}.image{min-height:250px;max-height:52vh}.tripgrid .primary{width:100%}.summary{display:grid}.summary strong{margin-left:0}.record{grid-template-columns:1fr}.meta,.lines{margin-left:0}.sideTotal{justify-items:start;text-align:left}.total,.price{white-space:normal}}@media(max-width:560px){.main{padding:12px}.side{padding:16px 12px;gap:14px}.mark,.capicon{width:40px;height:40px}.capture{min-height:72px;padding:12px}.stat{min-height:64px;padding:10px 12px}.stat strong{font-size:1.16rem}.panel,.records{padding:14px}.image{min-height:220px}th,td{padding:7px 6px}th:nth-child(2),td:nth-child(2){width:92px}th:last-child,td:last-child{width:42px}td input{min-height:38px;padding:6px 8px}.save .primary{width:100%}#hint{text-align:left}.daily{grid-template-columns:1fr}.record{padding:12px}.lines{padding:10px}}@media(max-width:420px){h1{font-size:1.58rem}.kicker{font-size:.72rem}.btn,.icon,.primary{min-height:40px}.text{padding:0 10px}}
-  </style>
-</head>
-<body>
-<div class="app">
-  <aside class="side"><div class="brand"><span class="mark"><i data-lucide="receipt-text"></i></span><div><div class="brand-title">日本旅遊消費</div><div class="brand-sub">Trip receipt log</div></div></div><label class="capture"><input id="photo" type="file" accept="image/*" capture="environment"><span class="capicon"><i data-lucide="camera"></i></span><span><strong>掃描旅費收據</strong><small>Camera / Upload</small></span></label><button id="demo" class="btn" type="button"><i data-lucide="sparkles"></i><span>載入範例</span></button><div class="stats"><div class="stat"><span><small>今日旅費</small><em>Trip day</em></span><strong id="today">¥0</strong></div><div class="stat"><span><small>旅程總額</small><em>Trip total</em></span><strong id="tripTotal">¥0</strong></div><div class="stat"><span><small>收據筆數</small><em>Receipts</em></span><strong id="count">0</strong></div></div></aside>
-  <main class="main"><header class="top row"><div><span class="kicker">Travel Expense Scan</span><h1>旅費收據掃描</h1><p id="status">等待照片</p></div><div class="actions"><button id="export" class="icon text" type="button"><i data-lucide="download"></i><span>CSV</span></button><button id="clear" class="icon danger" type="button" title="清除所有旅遊消費紀錄"><i data-lucide="trash-2"></i></button></div></header>
-    <section class="panel trip"><div class="title"><span><i data-lucide="map-pinned"></i></span><h2>旅程時間</h2></div><div class="grid tripgrid"><label><span>旅程名稱</span><input id="tripName" placeholder="例：東京自由行"></label><label><span>開始日期</span><input id="tripStart" type="date"></label><label><span>結束日期</span><input id="tripEnd" type="date"></label><button id="saveTrip" class="primary" type="button"><i data-lucide="archive"></i><span>儲存旅程區間</span></button></div><div id="tripSummary" class="summary"></div></section>
-    <section class="grid work"><section class="panel"><div class="title"><span><i data-lucide="image-up"></i></span><h2>照片與文字</h2></div><div id="imageBox" class="image"><img id="preview" alt="收據照片預覽"><div class="empty"><i data-lucide="image-up"></i><span>Receipt Photo</span></div></div><div class="progress"><div class="track"><span id="fill"></span></div><span id="pct">0%</span></div><textarea id="ocr" class="ocr" spellcheck="false" placeholder="OCR 文字會出現在這裡，可直接修正後重新解析旅費內容。"></textarea><div class="panel-actions row"><button id="parse" class="icon text"><i data-lucide="scan-text"></i><span>重新解析</span></button><button id="reset" class="icon text"><i data-lucide="rotate-ccw"></i><span>重設草稿</span></button></div></section>
-      <section class="panel"><div class="title"><span><i data-lucide="clipboard-list"></i></span><h2>旅遊消費內容</h2></div><div class="grid fields"><label><span>消費地點</span><input id="store"></label><label><span>日期</span><input id="date" type="date"></label><label><span>總金額</span><input id="total" type="number" min="0" step="1"></label></div><div class="items-head"><h2>品項</h2><button id="add" class="icon"><i data-lucide="plus"></i></button></div><div class="tablewrap"><table><thead><tr><th>品名</th><th>金額</th><th></th></tr></thead><tbody id="items"></tbody></table></div><div class="save row"><button id="save" class="primary"><i data-lucide="save"></i><span>儲存這筆旅費</span></button><span id="hint"></span></div></section></section>
-    <section class="records"><div class="title"><div><span class="kicker">Trip Daily Summary</span><h2>旅程每日花費</h2></div></div><div class="grid query"><label><span>旅程</span><select id="tripFilter"></select></label><label><span>日期</span><input id="dateFilter" type="date"></label><label><span>關鍵字</span><input id="keyword" type="search" placeholder="店家、品項"></label><button id="clearFilter" class="icon text"><i data-lucide="list-restart"></i><span>重設查詢</span></button></div><div id="daily" class="daily"></div><div id="records" class="list"></div></section>
-  </main>
-</div>
-<script>
-const $=s=>document.querySelector(s),storeKey='jp-trip-expenses.v1',tripKey='jp-trip.current.v1',ocrPaths={workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core.wasm.js',langPath:'https://tessdata.projectnaptha.com/4.0.0/'};let records=JSON.parse(localStorage.getItem(storeKey)||'[]'),trip=JSON.parse(localStorage.getItem(tripKey)||'null'),draftImg='';const sample=()=>`株式会社サンプルマート\n新宿南口店\n${jpDate()} 18:42\nおにぎり 鮭 138\n緑茶 600ml 129\n牛乳 218\nチョコレート 198\nメロンパン 158\nヨーグルト 128\n小計 969\n消費税 78\n合計 ¥1,047`;function iso(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}function jpDate(){let d=iso().split('-');return `${d[0]}年${d[1]}月${d[2]}日`}function yen(n){return new Intl.NumberFormat('ja-JP',{style:'currency',currency:'JPY',maximumFractionDigits:0}).format(+n||0)}function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}function saveLS(){localStorage.setItem(storeKey,JSON.stringify(records))}function saveTripLS(){trip?localStorage.setItem(tripKey,JSON.stringify(trip)):localStorage.removeItem(tripKey)}function inTrip(d,t=trip){return t&&t.id&&d>=t.start&&d<=t.end}function tripRecs(){return trip?records.filter(r=>r.tripId===trip.id):records}function attach(r){return inTrip(r.date)?{...r,tripId:trip.id,tripName:trip.name,tripStart:trip.start,tripEnd:trip.end,archivedAt:r.archivedAt||new Date().toISOString()}:r}function setStatus(s){$('#status').textContent=s}function progress(v,s){v=Math.max(0,Math.min(100,Math.round(v)));$('#fill').style.width=v+'%';$('#pct').textContent=v+'%';if(s)setStatus(s)}function norm(t){return String(t||'').replace(/[！-～]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xfee0)).replace(/　/g,' ').replace(/￥/g,'¥').replace(/[，、]/g,',').replace(/\r/g,'\n').split('\n').map(l=>l.replace(/\s+/g,' ').trim()).filter(Boolean).join('\n')}function amounts(l){let out=[],re=/(?:¥\s*)?-?\d{1,3}(?:,\d{3})+|-?\d{2,7}(?:\s*円)?/g,m;while((m=re.exec(l))){let n=+m[0].replace(/[^\d-]/g,'');if(Number.isFinite(n))out.push({v:n,i:m.index,raw:m[0]})}return out}function parseReceipt(raw){let text=norm(raw),lines=text.split('\n'),joined=lines.join('\n'),dm=joined.match(/(\d{4})[./-](\d{1,2})[./-](\d{1,2})|(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/),date=iso();if(dm){let y=dm[1]||dm[4],m=dm[2]||dm[5],d=dm[3]||dm[6];date=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`}let store=lines.slice(0,10).find(l=>!amounts(l).length&&!/レシート|TEL|電話|住所|登録|日付|日時|〒/.test(l))||'未辨識店家',items=[];for(let l of lines){if(/合\s*計|小\s*計|消費税|税額|お預|釣|レシート|TEL|登録|日付|日時/.test(l)||/\d{1,2}:\d{2}|年.*月.*日/.test(l))continue;let a=amounts(l),last=a[a.length-1];if(!last)continue;let name=l.slice(0,last.i).replace(/^[*※\-\s]+/,'').trim();if(name.length>1&&last.v>0)items.push({name,price:last.v})}let total=0,cands=[];lines.forEach((l,i)=>{let a=amounts(l);if(a.length&&/合\s*計|総\s*合\s*計|お支払|領収金額/.test(l)&&!/消費税|お預|釣/.test(l))cands.push({v:a[a.length-1].v,i})});total=cands.length?cands.sort((a,b)=>b.i-a.i)[0].v:items.reduce((s,i)=>s+i.price,0);return{store,date,total,items,rawText:text}}function row(item={name:'',price:''}){let tr=document.createElement('tr');tr.innerHTML=`<td><input class="iname" value="${esc(item.name)}"></td><td><input class="iprice" type="number" min="0" step="1" value="${item.price||''}"></td><td><button class="icon danger rem"><i data-lucide="x"></i></button></td>`;tr.querySelector('.rem').onclick=()=>{tr.remove();if(!$('#items tr'))row();hint()};tr.querySelectorAll('input').forEach(i=>i.oninput=hint);$('#items').append(tr);lucide.createIcons()}function draft(){let items=[...document.querySelectorAll('#items tr')].map(r=>({name:r.querySelector('.iname').value.trim(),price:+r.querySelector('.iprice').value||0})).filter(i=>i.name||i.price);return{store:$('#store').value.trim()||'未命名店家',date:$('#date').value||iso(),total:+$('#total').value||items.reduce((s,i)=>s+i.price,0),items,rawText:$('#ocr').value.trim(),image:draftImg}}function hint(){let d=draft(),sum=d.items.reduce((s,i)=>s+i.price,0);$('#hint').textContent=d.items.length?`${d.items.length} 項，品項合計 ${yen(sum)}`:''}function fillDraft(d={store:'',date:iso(),total:0,items:[]}){$('#store').value=d.store||'';$('#date').value=d.date||iso();$('#total').value=d.total||'';$('#items').innerHTML='';(d.items?.length?d.items:[{}]).forEach(row);hint();lucide.createIcons()}async function readUrl(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(f)})}async function prep(f){let src=await readUrl(f),img=new Image();img.src=src;await img.decode();let max=1900,sc=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*sc);c.height=Math.round(img.naturalHeight*sc);let ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.filter='contrast(1.18) brightness(1.04) saturate(.25)';ctx.drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.92)}async function ocrFile(f){if(!f||!window.Tesseract)return setStatus('OCR 引擎尚未載入');progress(0,'正在讀取照片');draftImg=await readUrl(f);$('#preview').src=draftImg;$('#imageBox').classList.add('has');try{let img=await prep(f);let r=await Tesseract.recognize(img,'jpn+eng',{...ocrPaths,gzip:true,logger:e=>{if(e.status==='recognizing text')progress(12+e.progress*86,'正在辨識文字');else if(e.status)setStatus(e.status)}});$('#ocr').value=norm(r.data.text);progress(100,'OCR 完成');fillDraft(parseReceipt($('#ocr').value))}catch(e){console.error(e);progress(0,'OCR 失敗，請改用較清晰照片')}}function renderTrip(){if(trip){$('#tripName').value=trip.name;$('#tripStart').value=trip.start;$('#tripEnd').value=trip.end;let rs=tripRecs(),sum=rs.reduce((s,r)=>s+r.total,0);$('#tripSummary').innerHTML=`<span class="status">${esc(trip.name)}</span><span>${trip.start} - ${trip.end}</span><span>已歸檔 ${rs.length} 筆</span><strong>${yen(sum)}</strong>`}else{$('#tripSummary').innerHTML=`<span class="status">尚未設定旅程時間</span><span>未歸檔 ${records.length} 筆</span><strong>${yen(records.reduce((s,r)=>s+r.total,0))}</strong>`}}function saveTrip(){let name=$('#tripName').value.trim()||'日本旅程',start=$('#tripStart').value,end=$('#tripEnd').value;if(!start||!end)return setStatus('請設定旅程開始與結束日期');if(end<start)return setStatus('旅程結束日期不可早於開始日期');let id=trip?.id||crypto.randomUUID();trip={id,name,start,end,updatedAt:new Date().toISOString()};records=records.map(r=>inTrip(r.date,trip)&&(!r.tripId||r.tripId===id)?{...r,tripId:id,tripName:name,tripStart:start,tripEnd:end}:r.tripId===id&&!inTrip(r.date,trip)?(({tripId,tripName,tripStart,tripEnd,archivedAt,...rest})=>rest)(r):r);saveTripLS();saveLS();setTripFilter(id);render();setStatus('已儲存旅程區間')}function archives(){let m=new Map();if(trip)m.set(trip.id,trip);records.forEach(r=>r.tripId&&m.set(r.tripId,{id:r.tripId,name:r.tripName,start:r.tripStart,end:r.tripEnd}));return [...m.values()].sort((a,b)=>b.start.localeCompare(a.start))}function compact(t){return t?`${t.start.slice(5).replace('-','/')}-${t.end.slice(5).replace('-','/')}`:''}function setTripFilter(v){$('#tripFilter').dataset.pref=v||'';$('#tripFilter').value=v||'all'}function renderFilter(){let want=$('#tripFilter').value||$('#tripFilter').dataset.pref||(trip?trip.id:'all'),opts=['<option value="all">所有旅程</option>',...archives().map(t=>`<option value="${t.id}">${t.id===trip?.id?'目前旅程':'旅程檔案'}：${esc(t.name)} ${compact(t)}</option>`),'<option value="unfiled">未歸檔</option>'];$('#tripFilter').innerHTML=opts.join('');$('#tripFilter').value=[...$('#tripFilter').options].some(o=>o.value===want)?want:(trip?trip.id:'all')}function filtered(includeDate=true){let tv=$('#tripFilter').value||'all',date=includeDate?$('#dateFilter').value:'',kw=$('#keyword').value.trim().toLowerCase();return records.filter(r=>(tv==='all'||(tv==='unfiled'?!r.tripId:r.tripId===tv))&&(!date||r.date===date)&&(!kw||`${r.store} ${r.date} ${r.total} ${r.tripName||''} ${(r.items||[]).map(i=>i.name+' '+i.price).join(' ')}`.toLowerCase().includes(kw)))}function renderStats(){let rs=tripRecs(),today=rs.filter(r=>r.date===iso()).reduce((s,r)=>s+r.total,0),sum=rs.reduce((s,r)=>s+r.total,0);$('#today').textContent=yen(today);$('#tripTotal').textContent=yen(sum);$('#count').textContent=rs.length}function renderDaily(){let m={};filtered(false).forEach(r=>m[r.date]=(m[r.date]||0)+r.total);let ds=Object.keys(m).sort().reverse();$('#daily').innerHTML=ds.length?ds.map(d=>`<button class="tile" data-date="${d}"><span class="lbl">旅費日計</span><span class="date">${d}</span><strong>${yen(m[d])}</strong></button>`).join(''):'<div class="emptyState">尚無旅程消費資料</div>';document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{$('#dateFilter').value=b.dataset.date;renderList()})}function itemList(items=[]){if(!items.length)return'<div class="emptyState">沒有品項明細</div>';let vis=items.length>4?items.slice(0,3):items,hid=items.length>4?items.slice(3):[];let rows=a=>a.map(i=>`<li class="itemrow"><span>${esc(i.name||'未命名品項')}</span><span class="price">${yen(i.price)}</span></li>`).join('');return `<ul class="itemlist">${rows(vis)}</ul>${hid.length?`<details class="more"><summary>展開其餘 ${hid.length} 項</summary><ul class="itemlist">${rows(hid)}</ul></details>`:''}`}function renderList(){let rs=filtered().sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt));$('#records').innerHTML=rs.length?rs.map(r=>`<article class="record"><div><div class="store"><span class="storemark">店</span><h3>${esc(r.store)}</h3></div><div class="meta"><span><i data-lucide="calendar"></i>${r.date}</span><span><i data-lucide="shopping-bag"></i>${r.items?.length||0} 項</span><span><i data-lucide="archive"></i>${esc(r.tripName||'未歸檔')}</span></div><div class="lines"><div class="items-head"><span>交易明細</span><span>${r.items?.length||0} 項</span></div>${itemList(r.items)}</div></div><div class="sideTotal"><small>合計</small><div class="total">${yen(r.total)}</div><button class="icon danger del" data-id="${r.id}"><i data-lucide="trash-2"></i></button></div></article>`).join(''):'<div class="emptyState">沒有符合條件的旅遊消費</div>';document.querySelectorAll('.del').forEach(b=>b.onclick=()=>{records=records.filter(r=>r.id!==b.dataset.id);saveLS();render()});lucide.createIcons()}function render(){renderTrip();renderFilter();renderStats();renderDaily();renderList();lucide.createIcons()}function saveExpense(){let r=attach({...draft(),id:crypto.randomUUID(),createdAt:new Date().toISOString()});records.unshift(r);saveLS();if(r.tripId)setTripFilter(r.tripId);render();setStatus(`已儲存旅費：${r.store} ${yen(r.total)}${r.tripId?'，已歸檔至 '+r.tripName:'，尚未歸檔至旅程'}`)}function exportCsv(){if(!records.length)return setStatus('目前沒有資料可匯出');let rows=[['旅程名稱','旅程開始','旅程結束','消費日期','消費地點','旅費總額','交易明細','明細金額']];records.forEach(r=>(r.items?.length?r.items:[{}]).forEach(i=>rows.push([r.tripName||'未歸檔',r.tripStart||'',r.tripEnd||'',r.date,r.store,r.total,i.name||'',i.price||''])));let csv='\ufeff'+rows.map(r=>r.map(c=>`"${String(c??'').replace(/"/g,'""')}"`).join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`jp-trip-expenses-${iso()}.csv`;a.click();setStatus('CSV 已匯出')}$('#photo').onchange=e=>ocrFile(e.target.files[0]);$('#demo').onclick=()=>{$('#ocr').value=sample();progress(100,'已載入範例');fillDraft(parseReceipt($('#ocr').value))};$('#parse').onclick=()=>$('#ocr').value.trim()?fillDraft(parseReceipt($('#ocr').value)):setStatus('沒有可解析的 OCR 文字');$('#reset').onclick=()=>{draftImg='';$('#preview').removeAttribute('src');$('#imageBox').classList.remove('has');$('#ocr').value='';progress(0,'等待旅費收據照片');fillDraft()};$('#add').onclick=()=>row();$('#saveTrip').onclick=saveTrip;$('#save').onclick=saveExpense;$('#export').onclick=exportCsv;$('#clear').onclick=()=>records.length&&confirm('確定要清除所有旅遊消費紀錄嗎？')&&(records=[],saveLS(),render(),setStatus('已清除所有旅遊消費紀錄'));$('#tripFilter').onchange=()=>{$('#tripFilter').dataset.pref=$('#tripFilter').value;renderDaily();renderList()};$('#dateFilter').onchange=renderList;$('#keyword').oninput=()=>{renderDaily();renderList()};$('#clearFilter').onclick=()=>{$('#dateFilter').value='';$('#keyword').value='';setTripFilter(trip?trip.id:'all');renderDaily();renderList()};$('#total').oninput=hint;fillDraft();render();
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>日本旅遊消費紀錄</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="side">
+        <div class="brand">
+          <span class="mark"><i data-lucide="receipt-text"></i></span>
+          <div>
+            <div class="brand-title">日本旅遊消費</div>
+            <div class="brand-sub">Trip receipt log</div>
+          </div>
+        </div>
+        <label class="capture"
+          ><input
+            id="photo"
+            type="file"
+            accept="image/*"
+            capture="environment"
+          /><span class="capicon"><i data-lucide="camera"></i></span
+          ><span
+            ><strong>掃描旅費收據</strong><small>Camera / Upload</small></span
+          ></label
+        ><button id="demo" class="btn" type="button">
+          <i data-lucide="sparkles"></i><span>載入範例</span>
+        </button>
+        <section class="syncbox" aria-label="跨裝置同步">
+          <div class="sync-head">
+            <span id="syncDot" class="sync-dot" aria-hidden="true"></span>
+            <div>
+              <strong>跨裝置同步</strong>
+              <small id="syncStatus">本機保存</small>
+            </div>
+          </div>
+          <label>
+            <span>同步代碼</span>
+            <input
+              id="syncCode"
+              type="password"
+              autocomplete="off"
+              placeholder="例：tokyo-2026"
+            />
+          </label>
+          <div class="sync-actions">
+            <button id="syncConnect" class="primary sync-connect" type="button">
+              <i data-lucide="cloud"></i><span>連線同步</span>
+            </button>
+            <button id="syncNow" class="icon" type="button" title="立即同步">
+              <i data-lucide="refresh-cw"></i>
+            </button>
+            <button
+              id="syncDisconnect"
+              class="icon danger"
+              type="button"
+              title="停用這台裝置的同步"
+            >
+              <i data-lucide="cloud-off"></i>
+            </button>
+          </div>
+        </section>
+        <div class="stats">
+          <div class="stat">
+            <span><small>今日旅費</small><em>Trip day</em></span
+            ><strong id="today">¥0</strong>
+          </div>
+          <div class="stat">
+            <span><small>旅程總額</small><em>Trip total</em></span
+            ><strong id="tripTotal">¥0</strong>
+          </div>
+          <div class="stat">
+            <span><small>收據筆數</small><em>Receipts</em></span
+            ><strong id="count">0</strong>
+          </div>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="top row">
+          <div>
+            <span class="kicker">Travel Expense Scan</span>
+            <h1>旅費收據掃描</h1>
+            <p id="status">等待照片</p>
+          </div>
+          <div class="actions">
+            <button id="export" class="icon text" type="button">
+              <i data-lucide="download"></i><span>CSV</span></button
+            ><button
+              id="clear"
+              class="icon danger"
+              type="button"
+              title="清除所有旅遊消費紀錄"
+            >
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </header>
+        <section class="panel trip">
+          <div class="title">
+            <span><i data-lucide="map-pinned"></i></span>
+            <h2>旅程時間</h2>
+          </div>
+          <div class="grid tripgrid">
+            <label
+              ><span>旅程名稱</span
+              ><input id="tripName" placeholder="例：東京自由行" /></label
+            ><label
+              ><span>開始日期</span><input id="tripStart" type="date" /></label
+            ><label
+              ><span>結束日期</span><input id="tripEnd" type="date" /></label
+            ><button id="saveTrip" class="primary" type="button">
+              <i data-lucide="archive"></i><span>儲存旅程區間</span>
+            </button>
+          </div>
+          <div id="tripSummary" class="summary"></div>
+        </section>
+        <section class="grid work">
+          <section class="panel">
+            <div class="title">
+              <span><i data-lucide="image-up"></i></span>
+              <h2>照片與文字</h2>
+            </div>
+            <div id="imageBox" class="image">
+              <img id="preview" alt="收據照片預覽" />
+              <div class="empty">
+                <i data-lucide="image-up"></i><span>Receipt Photo</span>
+              </div>
+            </div>
+            <div class="progress">
+              <div class="track"><span id="fill"></span></div>
+              <span id="pct">0%</span>
+            </div>
+            <textarea
+              id="ocr"
+              class="ocr"
+              spellcheck="false"
+              placeholder="OCR 文字會出現在這裡，可直接修正後重新解析旅費內容。"
+            ></textarea>
+            <div class="panel-actions row">
+              <button id="parse" class="icon text">
+                <i data-lucide="scan-text"></i><span>重新解析</span></button
+              ><button id="reset" class="icon text">
+                <i data-lucide="rotate-ccw"></i><span>重設草稿</span>
+              </button>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="title">
+              <span><i data-lucide="clipboard-list"></i></span>
+              <h2>旅遊消費內容</h2>
+            </div>
+            <div class="grid fields">
+              <label><span>消費地點</span><input id="store" /></label
+              ><label><span>日期</span><input id="date" type="date" /></label
+              ><label
+                ><span>總金額</span
+                ><input id="total" type="number" min="0" step="1"
+              /></label>
+            </div>
+            <div class="items-head">
+              <h2>品項</h2>
+              <button id="add" class="icon"><i data-lucide="plus"></i></button>
+            </div>
+            <div class="tablewrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>品名</th>
+                    <th>金額</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="items"></tbody>
+              </table>
+            </div>
+            <div class="save row">
+              <button id="save" class="primary">
+                <i data-lucide="save"></i><span>儲存這筆旅費</span></button
+              ><span id="hint"></span>
+            </div>
+          </section>
+        </section>
+        <section class="records">
+          <div class="title">
+            <div>
+              <span class="kicker">Trip Daily Summary</span>
+              <h2>旅程每日花費</h2>
+            </div>
+          </div>
+          <div class="grid query">
+            <label
+              ><span>旅程</span
+              ><select id="tripFilter"></select></label
+            ><label
+              ><span>日期</span><input id="dateFilter" type="date" /></label
+            ><label
+              ><span>關鍵字</span
+              ><input
+                id="keyword"
+                type="search"
+                placeholder="店家、品項" /></label
+            ><button id="clearFilter" class="icon text">
+              <i data-lucide="list-restart"></i><span>重設查詢</span>
+            </button>
+          </div>
+          <div id="daily" class="daily"></div>
+          <div id="records" class="list"></div>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
 </html>
