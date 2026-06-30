@@ -27,26 +27,27 @@
             <i data-lucide="search"></i><span>歷史查詢</span>
           </a>
         </nav>
-        <section class="syncbox" aria-label="跨裝置同步">
+        <section class="syncbox" aria-label="本趟旅程同步">
           <div class="sync-head">
             <span id="syncDot" class="sync-dot" aria-hidden="true"></span>
             <div>
-              <strong>跨裝置同步</strong>
-              <small id="syncStatus">本機保存</small>
+              <strong>本趟旅程同步</strong>
+              <small id="syncStatus">先設定旅程後即可同步</small>
             </div>
           </div>
           <label>
-            <span>同步代碼</span>
+            <span>本趟同步代碼</span>
             <input
               id="syncCode"
-              type="password"
+              type="text"
               autocomplete="off"
+              spellcheck="false"
               placeholder="例：tokyo-2026"
             />
           </label>
           <div class="sync-actions">
             <button id="syncConnect" class="primary sync-connect" type="button">
-              <i data-lucide="cloud"></i><span>連線同步</span>
+              <i data-lucide="cloud"></i><span>加入旅程</span>
             </button>
             <button id="syncNow" class="icon" type="button" title="立即同步">
               <i data-lucide="refresh-cw"></i>

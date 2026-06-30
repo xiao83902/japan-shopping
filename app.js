@@ -2,7 +2,6 @@ const $ = (s) => document.querySelector(s),
   storeKey = "jp-trip-expenses.v1",
   tripKey = "jp-trip.current.v1",
   deletedKey = "jp-trip.deleted.v1",
-  syncKey = "jp-trip.sync.v1",
   syncApiBase = "https://japan-shopping-sync.0902.one",
   ocrPaths = {
     workerPath:
@@ -14,7 +13,7 @@ const $ = (s) => document.querySelector(s),
 let records = loadJson(storeKey, []),
   trip = loadJson(tripKey, null),
   deletedIds = new Set(loadJson(deletedKey, [])),
-  syncState = loadJson(syncKey, null),
+  syncState = null,
   syncBusy = false,
   syncTimer = 0,
   draftImg = "";
@@ -117,11 +116,64 @@ function cloudRecord(record) {
   let { image, ...rest } = record;
   return rest;
 }
-function currentSnapshot() {
+function makeSyncCode(start = iso()) {
+  let bytes = new Uint8Array(3);
+  crypto.getRandomValues(bytes);
+  let suffix = [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+  return `jp-${start.replaceAll("-", "")}-${suffix}`;
+}
+function tripCloud(t = trip) {
+  return t
+    ? {
+        id: t.id,
+        name: t.name,
+        start: t.start,
+        end: t.end,
+        syncCode: t.syncCode || syncState?.code || "",
+        updatedAt: t.updatedAt || new Date().toISOString(),
+      }
+    : null;
+}
+function alignRecordToTrip(record, t) {
   return {
-    version: 1,
-    records: records.map(cloudRecord),
-    trip,
+    ...record,
+    tripId: t.id,
+    tripName: t.name,
+    tripStart: t.start,
+    tripEnd: t.end,
+    archivedAt: record.archivedAt || new Date().toISOString(),
+    updatedAt: record.updatedAt || new Date().toISOString(),
+  };
+}
+function scopedTripRecords(t = trip) {
+  if (!t?.id) return [];
+  return records.filter(
+    (r) => r.tripId === t.id || (!r.tripId && inTrip(r.date, t)),
+  );
+}
+function scopedRecordsForTrips(trips) {
+  let usableTrips = trips.filter((t) => t?.id),
+    seen = new Set();
+  if (!usableTrips.length) return [];
+  return records.filter((record) => {
+    let matched = usableTrips.some(
+      (t) =>
+        record.tripId === t.id || (!record.tripId && inTrip(record.date, t)),
+    );
+    if (!matched || seen.has(record.id)) return false;
+    seen.add(record.id);
+    return true;
+  });
+}
+function currentSnapshot() {
+  let activeTrip = tripCloud();
+  return {
+    version: 2,
+    scope: "trip",
+    records: activeTrip
+      ? scopedTripRecords(trip).map((r) => cloudRecord(alignRecordToTrip(r, activeTrip)))
+      : [],
+    trip: activeTrip,
     deletedIds: [...deletedIds],
     updatedAt: new Date().toISOString(),
   };
@@ -164,11 +216,51 @@ function newerTrip(localTrip, remoteTrip) {
     ? remoteTrip
     : localTrip;
 }
+function mergedTrip(localTrip, remoteTrip, code) {
+  let winner = newerTrip(localTrip, remoteTrip);
+  if (!winner) return null;
+  return {
+    ...winner,
+    id: remoteTrip?.id || winner.id || localTrip?.id || crypto.randomUUID(),
+    syncCode:
+      code || winner.syncCode || localTrip?.syncCode || remoteTrip?.syncCode || "",
+    updatedAt: winner.updatedAt || new Date().toISOString(),
+  };
+}
 function applyRemoteSnapshot(payload) {
   let remote = normalizeSnapshot(payload);
+  let code = syncState?.code || trip?.syncCode || remote.trip?.syncCode || "",
+    localTrip = trip,
+    remoteTrip = remote.trip
+      ? { ...remote.trip, syncCode: remote.trip.syncCode || code }
+      : null,
+    nextTrip = mergedTrip(localTrip, remoteTrip, code);
+
+  if (!nextTrip) {
+    render();
+    return;
+  }
+
+  let localScoped = scopedRecordsForTrips([localTrip, nextTrip]),
+    localAligned = localScoped.map((r) => alignRecordToTrip(r, nextTrip)),
+    remoteAligned = remote.records.map((r) => alignRecordToTrip(r, nextTrip)),
+    oldTripIds = new Set(
+      [localTrip?.id, remoteTrip?.id, nextTrip.id].filter(Boolean),
+    ),
+    scopedIds = new Set(
+      [...localScoped, ...localAligned, ...remoteAligned].map((r) => r.id),
+    );
+
   deletedIds = new Set([...deletedIds, ...remote.deletedIds]);
-  records = mergeRecords(records, remote.records, deletedIds);
-  trip = newerTrip(trip, remote.trip);
+  let otherRecords = records.filter(
+    (r) => !oldTripIds.has(r.tripId) && !scopedIds.has(r.id),
+  );
+  records = mergeRecords(
+    [...otherRecords, ...localAligned],
+    remoteAligned,
+    deletedIds,
+  );
+  trip = nextTrip;
   persistLocalOnly();
   render();
 }
@@ -189,9 +281,28 @@ async function buildSyncState(code) {
   return {
     spaceId,
     authToken,
-    label: `****${normalized.slice(-4)}`,
+    code: normalized,
+    label: normalized,
     connectedAt: new Date().toISOString(),
   };
+}
+async function initSyncFromTrip() {
+  try {
+    if (trip?.id && !trip.syncCode) {
+      trip = {
+        ...trip,
+        syncCode: makeSyncCode(trip.start),
+        updatedAt: new Date().toISOString(),
+      };
+      saveTripLS();
+    }
+    syncState = trip?.syncCode ? await buildSyncState(trip.syncCode) : null;
+    renderSync();
+  } catch (error) {
+    syncState = null;
+    setSyncMessage("同步代碼格式不正確", "error");
+    console.error(error);
+  }
 }
 function syncHeaders() {
   return {
@@ -205,17 +316,29 @@ function setSyncMessage(message, state = syncState ? "on" : "off") {
   if ($("#syncStatus")) $("#syncStatus").textContent = message;
 }
 function renderSync() {
-  if (!syncState?.spaceId) {
-    setSyncMessage("本機保存", "off");
+  let input = $("#syncCode"),
+    connectLabel = $("#syncConnect span");
+  if (input && document.activeElement !== input) {
+    input.value = trip?.syncCode || syncState?.code || "";
+  }
+  if (!trip?.id) {
+    setSyncMessage("先設定旅程後即可同步", "off");
     if ($("#syncNow")) $("#syncNow").disabled = true;
     if ($("#syncDisconnect")) $("#syncDisconnect").disabled = true;
-    if ($("#syncConnect span")) $("#syncConnect span").textContent = "連線同步";
+    if (connectLabel) connectLabel.textContent = "加入旅程";
     return;
   }
-  setSyncMessage(`已連線 ${syncState.label}`, "on");
+  if (!syncState?.spaceId) {
+    setSyncMessage("尚未設定本趟同步代碼", "off");
+    if ($("#syncNow")) $("#syncNow").disabled = true;
+    if ($("#syncDisconnect")) $("#syncDisconnect").disabled = true;
+    if (connectLabel) connectLabel.textContent = "建立同步";
+    return;
+  }
+  setSyncMessage(`本趟代碼：${syncState.label}`, "on");
   if ($("#syncNow")) $("#syncNow").disabled = false;
   if ($("#syncDisconnect")) $("#syncDisconnect").disabled = false;
-  if ($("#syncConnect span")) $("#syncConnect span").textContent = "更新代碼";
+  if (connectLabel) connectLabel.textContent = "套用代碼";
 }
 function queueSync() {
   if (!syncState?.spaceId) return;
@@ -239,6 +362,7 @@ async function pushSnapshot() {
   return response.json();
 }
 async function syncNow({ quiet = false } = {}) {
+  if (!syncState?.spaceId && trip?.syncCode) await initSyncFromTrip();
   if (!syncState?.spaceId || syncBusy) return;
   syncBusy = true;
   try {
@@ -261,23 +385,41 @@ async function syncNow({ quiet = false } = {}) {
   }
 }
 async function connectSync() {
+  let previousSyncState = syncState;
   try {
     let code = $("#syncCode").value.trim();
+    if (!code && trip?.id) code = trip.syncCode || makeSyncCode(trip.start);
     syncState = await buildSyncState(code);
-    localStorage.setItem(syncKey, JSON.stringify(syncState));
-    $("#syncCode").value = "";
+    setSyncMessage("同步中...", "busy");
+    let remote = await fetchRemoteSnapshot();
+    if (!remote.trip && !trip?.id) {
+      syncState = null;
+      renderSync();
+      throw new Error("請先設定旅程時間，或輸入已存在旅程的同步代碼");
+    }
+    if (trip?.id && trip.syncCode !== code) {
+      trip = { ...trip, syncCode: code, updatedAt: new Date().toISOString() };
+      saveTripLS();
+    }
+    applyRemoteSnapshot(remote);
+    await pushSnapshot();
     renderSync();
-    await syncNow();
+    setStatus("本趟旅程同步已啟用");
   } catch (error) {
+    syncState = previousSyncState;
+    renderSync();
     setSyncMessage(error.message || "同步設定失敗", "error");
     setStatus(error.message || "同步設定失敗");
   }
 }
 function disconnectSync() {
   syncState = null;
-  localStorage.removeItem(syncKey);
+  if (trip?.id) {
+    trip = { ...trip, syncCode: "", updatedAt: new Date().toISOString() };
+    saveTripLS();
+  }
   renderSync();
-  setStatus("這台裝置已停用雲端同步，本機資料仍保留");
+  setStatus("這台裝置已停用本趟旅程同步，本機資料仍保留");
 }
 function norm(t) {
   return String(t || "")
@@ -482,15 +624,23 @@ function renderTrip() {
         `<span class="status">尚未設定旅程時間</span><span>未歸檔 ${records.length} 筆</span><strong>${yen(records.reduce((s, r) => s + r.total, 0))}</strong>`;
   }
 }
-function saveTrip() {
+async function saveTrip() {
   let name = $("#tripName").value.trim() || "日本旅程",
     start = $("#tripStart").value,
     end = $("#tripEnd").value;
   if (!start || !end) return setStatus("請設定旅程開始與結束日期");
   if (end < start) return setStatus("旅程結束日期不可早於開始日期");
   let id = trip?.id || crypto.randomUUID(),
-    now = new Date().toISOString();
-  trip = { id, name, start, end, updatedAt: now };
+    now = new Date().toISOString(),
+    typedCode = $("#syncCode")?.value.trim() || "",
+    syncCode = typedCode || trip?.syncCode || makeSyncCode(start);
+  try {
+    syncState = await buildSyncState(syncCode);
+  } catch (error) {
+    setSyncMessage(error.message || "同步代碼格式不正確", "error");
+    return setStatus(error.message || "同步代碼格式不正確");
+  }
+  trip = { id, name, start, end, syncCode, updatedAt: now };
   records = records.map((r) =>
     inTrip(r.date, trip) && (!r.tripId || r.tripId === id)
       ? {
@@ -512,7 +662,9 @@ function saveTrip() {
   saveLS();
   setTripFilter(id);
   render();
-  setStatus("已儲存旅程區間");
+  renderSync();
+  await syncNow({ quiet: true });
+  setStatus("已儲存旅程區間，並建立本趟同步代碼");
 }
 function archives() {
   let m = new Map();
@@ -716,4 +868,6 @@ bind("#total", "oninput", hint);
 if ($("#items")) fillDraft();
 render();
 renderSync();
-if (syncState?.spaceId) queueSync();
+initSyncFromTrip().then(() => {
+  if (syncState?.spaceId) queueSync();
+});
