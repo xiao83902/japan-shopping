@@ -4,13 +4,11 @@ A mobile-first travel expense tracker for Japan trips. Take or upload a receipt 
 
 ## Live URL
 
-Planned custom domain:
+Target custom domain:
 
 https://japan-shopping.0902.one/
 
-GitHub Pages fallback after deployment:
-
-https://xiao83902.github.io/japan-shopping/
+The app is configured for GitHub Pages through `CNAME` and `.github/workflows/pages.yml`. The URL will work after the DNS record below is added and GitHub Pages finishes issuing HTTPS.
 
 ## DNS setup for 0902.one
 
