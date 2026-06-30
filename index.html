@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f3f7f5" />
     <title>日本旅遊消費紀錄</title>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -85,7 +86,7 @@
           <div>
             <span class="kicker">Travel Expense Scan</span>
             <h1>旅費收據掃描</h1>
-            <p id="status">等待照片</p>
+            <p id="status" aria-live="polite">等待照片</p>
           </div>
           <div class="actions">
             <button id="export" class="icon text" type="button">
@@ -142,9 +143,9 @@
               placeholder="OCR 文字會出現在這裡，可直接修正後重新解析旅費內容。"
             ></textarea>
             <div class="panel-actions row">
-              <button id="parse" class="icon text">
+              <button id="parse" class="icon text" type="button">
                 <i data-lucide="scan-text"></i><span>重新解析</span></button
-              ><button id="reset" class="icon text">
+              ><button id="reset" class="icon text" type="button">
                 <i data-lucide="rotate-ccw"></i><span>重設草稿</span>
               </button>
             </div>
@@ -164,7 +165,9 @@
             </div>
             <div class="items-head">
               <h2>品項</h2>
-              <button id="add" class="icon"><i data-lucide="plus"></i></button>
+              <button id="add" class="icon" type="button">
+                <i data-lucide="plus"></i>
+              </button>
             </div>
             <div class="tablewrap">
               <table>
@@ -179,7 +182,7 @@
               </table>
             </div>
             <div class="save row">
-              <button id="save" class="primary">
+              <button id="save" class="primary" type="button">
                 <i data-lucide="save"></i><span>儲存這筆旅費</span></button
               ><span id="hint"></span>
             </div>
@@ -204,7 +207,7 @@
                 id="keyword"
                 type="search"
                 placeholder="店家、品項" /></label
-            ><button id="clearFilter" class="icon text">
+            ><button id="clearFilter" class="icon text" type="button">
               <i data-lucide="list-restart"></i><span>重設查詢</span>
             </button>
           </div>

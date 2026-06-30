@@ -354,7 +354,7 @@ function parseReceipt(raw) {
 }
 function row(item = { name: "", price: "" }) {
   let tr = document.createElement("tr");
-  tr.innerHTML = `<td><input class="iname" value="${esc(item.name)}"></td><td><input class="iprice" type="number" min="0" step="1" value="${item.price || ""}"></td><td><button class="icon danger rem"><i data-lucide="x"></i></button></td>`;
+  tr.innerHTML = `<td><input class="iname" value="${esc(item.name)}"></td><td><input class="iprice" type="number" min="0" step="1" value="${item.price || ""}"></td><td><button class="icon danger rem" type="button" title="刪除此品項"><i data-lucide="x"></i></button></td>`;
   tr.querySelector(".rem").onclick = () => {
     tr.remove();
     if (!$("#items tr")) row();
@@ -415,7 +415,7 @@ async function prep(f) {
   c.width = Math.round(img.naturalWidth * sc);
   c.height = Math.round(img.naturalHeight * sc);
   let ctx = c.getContext("2d");
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = "#fdfefd";
   ctx.fillRect(0, 0, c.width, c.height);
   ctx.filter = "contrast(1.18) brightness(1.04) saturate(.25)";
   ctx.drawImage(img, 0, 0, c.width, c.height);
@@ -588,10 +588,10 @@ function itemList(items = []) {
     a
       .map(
         (i) =>
-          `<li class="itemrow"><span>${esc(i.name || "未命名品項")}</span><span class="price">${yen(i.price)}</span></li>`,
+          `<li class="itemrow"><span class="itemname">${esc(i.name || "未命名品項")}</span><span class="price">${yen(i.price)}</span></li>`,
       )
       .join("");
-  return `<ul class="itemlist">${rows(vis)}</ul>${hid.length ? `<details class="more"><summary>展開其餘 ${hid.length} 項</summary><ul class="itemlist">${rows(hid)}</ul></details>` : ""}`;
+  return `<ul class="itemlist">${rows(vis)}</ul>${hid.length ? `<details class="more"><summary><span>展開其餘 ${hid.length} 項</span><i data-lucide="chevron-down"></i></summary><ul class="itemlist">${rows(hid)}</ul></details>` : ""}`;
 }
 function renderList() {
   let rs = filtered().sort((a, b) =>
@@ -601,7 +601,7 @@ function renderList() {
     ? rs
         .map(
           (r) =>
-            `<article class="record"><div><div class="store"><span class="storemark">店</span><h3>${esc(r.store)}</h3></div><div class="meta"><span><i data-lucide="calendar"></i>${r.date}</span><span><i data-lucide="shopping-bag"></i>${r.items?.length || 0} 項</span><span><i data-lucide="archive"></i>${esc(r.tripName || "未歸檔")}</span></div><div class="lines"><div class="items-head"><span>交易明細</span><span>${r.items?.length || 0} 項</span></div>${itemList(r.items)}</div></div><div class="sideTotal"><small>合計</small><div class="total">${yen(r.total)}</div><button class="icon danger del" data-id="${r.id}"><i data-lucide="trash-2"></i></button></div></article>`,
+            `<article class="record"><div class="record-main"><div class="record-head"><div class="store"><span class="storemark">店</span><div class="storetext"><h3>${esc(r.store)}</h3><span class="record-trip">${esc(r.tripName || "未歸檔")}</span></div></div><div class="record-total"><small>合計</small><div class="total">${yen(r.total)}</div></div></div><div class="meta"><span><i data-lucide="calendar"></i>${r.date}</span><span><i data-lucide="shopping-bag"></i>${r.items?.length || 0} 項</span><span><i data-lucide="archive"></i>${esc(r.tripName || "未歸檔")}</span></div><div class="lines"><div class="items-head"><span>交易明細</span><span>${r.items?.length || 0} 項</span></div>${itemList(r.items)}</div></div><button class="icon danger del record-delete" data-id="${r.id}" title="刪除這筆旅費"><i data-lucide="trash-2"></i></button></article>`,
         )
         .join("")
     : '<div class="emptyState">沒有符合條件的旅遊消費</div>';
