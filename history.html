@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f5f1" />
+    <title>歷史查詢｜日本旅遊消費紀錄</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="history">
+    <div class="app">
+      <aside class="side">
+        <a class="brand" href="./" aria-label="日本旅遊消費">
+          <span class="mark"><i data-lucide="receipt-text"></i></span>
+          <span>
+            <span class="brand-title">日本旅遊消費</span>
+            <span class="brand-sub">旅程收據管理</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="主要頁面">
+          <a class="navlink" href="./">
+            <i data-lucide="scan-line"></i><span>掃描辨識</span>
+          </a>
+          <a class="navlink active" href="./history.html">
+            <i data-lucide="search"></i><span>歷史查詢</span>
+          </a>
+        </nav>
+        <section class="syncbox" aria-label="跨裝置同步">
+          <div class="sync-head">
+            <span id="syncDot" class="sync-dot" aria-hidden="true"></span>
+            <div>
+              <strong>跨裝置同步</strong>
+              <small id="syncStatus">本機保存</small>
+            </div>
+          </div>
+          <label>
+            <span>同步代碼</span>
+            <input
+              id="syncCode"
+              type="password"
+              autocomplete="off"
+              placeholder="例：tokyo-2026"
+            />
+          </label>
+          <div class="sync-actions">
+            <button id="syncConnect" class="primary sync-connect" type="button">
+              <i data-lucide="cloud"></i><span>連線同步</span>
+            </button>
+            <button id="syncNow" class="icon" type="button" title="立即同步">
+              <i data-lucide="refresh-cw"></i>
+            </button>
+            <button
+              id="syncDisconnect"
+              class="icon danger"
+              type="button"
+              title="停用這台裝置的同步"
+            >
+              <i data-lucide="cloud-off"></i>
+            </button>
+          </div>
+        </section>
+        <div class="stats" aria-label="旅程統計">
+          <div class="stat">
+            <span><small>今日旅費</small><em>目前日期</em></span>
+            <strong id="today">¥0</strong>
+          </div>
+          <div class="stat">
+            <span><small>旅程總額</small><em>目前旅程</em></span>
+            <strong id="tripTotal">¥0</strong>
+          </div>
+          <div class="stat">
+            <span><small>收據筆數</small><em>已歸檔</em></span>
+            <strong id="count">0</strong>
+          </div>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="top">
+          <div>
+            <h1>歷史查詢</h1>
+          </div>
+          <a class="primary page-action" href="./">
+            <i data-lucide="camera"></i><span>新增收據</span>
+          </a>
+        </header>
+        <section class="records">
+          <div class="title">
+            <span><i data-lucide="calendar-days"></i></span>
+            <h2>每日花費</h2>
+          </div>
+          <div class="grid query">
+            <label
+              ><span>旅程</span
+              ><select id="tripFilter"></select></label
+            ><label
+              ><span>日期</span><input id="dateFilter" type="date" /></label
+            ><label
+              ><span>關鍵字</span
+              ><input
+                id="keyword"
+                type="search"
+                placeholder="店家、品項" /></label
+            ><button id="clearFilter" class="icon text" type="button">
+              <i data-lucide="list-restart"></i><span>重設查詢</span>
+            </button>
+          </div>
+          <div id="daily" class="daily"></div>
+          <div id="records" class="list"></div>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

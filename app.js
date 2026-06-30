@@ -49,6 +49,10 @@ function esc(s) {
       })[m],
   );
 }
+function bind(s, prop, handler) {
+  let el = $(s);
+  if (el) el[prop] = handler;
+}
 function loadJson(key, fallback) {
   try {
     let parsed = JSON.parse(localStorage.getItem(key) || "null");
@@ -97,12 +101,13 @@ function attach(r) {
     : r;
 }
 function setStatus(s) {
-  $("#status").textContent = s;
+  let el = $("#status");
+  if (el) el.textContent = s;
 }
 function progress(v, s) {
   v = Math.max(0, Math.min(100, Math.round(v)));
-  $("#fill").style.width = v + "%";
-  $("#pct").textContent = v + "%";
+  if ($("#fill")) $("#fill").style.width = v + "%";
+  if ($("#pct")) $("#pct").textContent = v + "%";
   if (s) setStatus(s);
 }
 function recordStamp(record = {}) {
@@ -202,15 +207,15 @@ function setSyncMessage(message, state = syncState ? "on" : "off") {
 function renderSync() {
   if (!syncState?.spaceId) {
     setSyncMessage("本機保存", "off");
-    $("#syncNow").disabled = true;
-    $("#syncDisconnect").disabled = true;
-    $("#syncConnect span").textContent = "連線同步";
+    if ($("#syncNow")) $("#syncNow").disabled = true;
+    if ($("#syncDisconnect")) $("#syncDisconnect").disabled = true;
+    if ($("#syncConnect span")) $("#syncConnect span").textContent = "連線同步";
     return;
   }
   setSyncMessage(`已連線 ${syncState.label}`, "on");
-  $("#syncNow").disabled = false;
-  $("#syncDisconnect").disabled = false;
-  $("#syncConnect span").textContent = "更新代碼";
+  if ($("#syncNow")) $("#syncNow").disabled = false;
+  if ($("#syncDisconnect")) $("#syncDisconnect").disabled = false;
+  if ($("#syncConnect span")) $("#syncConnect span").textContent = "更新代碼";
 }
 function queueSync() {
   if (!syncState?.spaceId) return;
@@ -353,6 +358,7 @@ function parseReceipt(raw) {
   return { store, date, total, items, rawText: text };
 }
 function row(item = { name: "", price: "" }) {
+  if (!$("#items")) return;
   let tr = document.createElement("tr");
   tr.innerHTML = `<td><input class="iname" value="${esc(item.name)}"></td><td><input class="iprice" type="number" min="0" step="1" value="${item.price || ""}"></td><td><button class="icon danger rem" type="button" title="刪除此品項"><i data-lucide="x"></i></button></td>`;
   tr.querySelector(".rem").onclick = () => {
@@ -365,6 +371,16 @@ function row(item = { name: "", price: "" }) {
   lucide.createIcons();
 }
 function draft() {
+  if (!$("#items")) {
+    return {
+      store: "未命名店家",
+      date: iso(),
+      total: 0,
+      items: [],
+      rawText: "",
+      image: "",
+    };
+  }
   let items = [...document.querySelectorAll("#items tr")]
     .map((r) => ({
       name: r.querySelector(".iname").value.trim(),
@@ -381,6 +397,7 @@ function draft() {
   };
 }
 function hint() {
+  if (!$("#hint")) return;
   let d = draft(),
     sum = d.items.reduce((s, i) => s + i.price, 0);
   $("#hint").textContent = d.items.length
@@ -388,6 +405,7 @@ function hint() {
     : "";
 }
 function fillDraft(d = { store: "", date: iso(), total: 0, items: [] }) {
+  if (!$("#items")) return;
   $("#store").value = d.store || "";
   $("#date").value = d.date || iso();
   $("#total").value = d.total || "";
@@ -422,7 +440,8 @@ async function prep(f) {
   return c.toDataURL("image/jpeg", 0.92);
 }
 async function ocrFile(f) {
-  if (!f || !window.Tesseract) return setStatus("OCR 引擎尚未載入");
+  if (!$("#ocr") || !f || !window.Tesseract)
+    return setStatus("辨識引擎尚未載入");
   progress(0, "正在讀取照片");
   draftImg = await readUrl(f);
   $("#preview").src = draftImg;
@@ -447,17 +466,20 @@ async function ocrFile(f) {
   }
 }
 function renderTrip() {
+  let summary = $("#tripSummary");
   if (trip) {
-    $("#tripName").value = trip.name;
-    $("#tripStart").value = trip.start;
-    $("#tripEnd").value = trip.end;
+    if ($("#tripName")) $("#tripName").value = trip.name;
+    if ($("#tripStart")) $("#tripStart").value = trip.start;
+    if ($("#tripEnd")) $("#tripEnd").value = trip.end;
     let rs = tripRecs(),
       sum = rs.reduce((s, r) => s + r.total, 0);
-    $("#tripSummary").innerHTML =
-      `<span class="status">${esc(trip.name)}</span><span>${trip.start} - ${trip.end}</span><span>已歸檔 ${rs.length} 筆</span><strong>${yen(sum)}</strong>`;
+    if (summary)
+      summary.innerHTML =
+        `<span class="status">${esc(trip.name)}</span><span>${trip.start} 至 ${trip.end}</span><span>已歸檔 ${rs.length} 筆</span><strong>${yen(sum)}</strong>`;
   } else {
-    $("#tripSummary").innerHTML =
-      `<span class="status">尚未設定旅程時間</span><span>未歸檔 ${records.length} 筆</span><strong>${yen(records.reduce((s, r) => s + r.total, 0))}</strong>`;
+    if (summary)
+      summary.innerHTML =
+        `<span class="status">尚未設定旅程時間</span><span>未歸檔 ${records.length} 筆</span><strong>${yen(records.reduce((s, r) => s + r.total, 0))}</strong>`;
   }
 }
 function saveTrip() {
@@ -513,13 +535,17 @@ function compact(t) {
     : "";
 }
 function setTripFilter(v) {
-  $("#tripFilter").dataset.pref = v || "";
-  $("#tripFilter").value = v || "all";
+  let filter = $("#tripFilter");
+  if (!filter) return;
+  filter.dataset.pref = v || "";
+  filter.value = v || "all";
 }
 function renderFilter() {
+  let filter = $("#tripFilter");
+  if (!filter) return;
   let want =
-      $("#tripFilter").value ||
-      $("#tripFilter").dataset.pref ||
+      filter.value ||
+      filter.dataset.pref ||
       (trip ? trip.id : "all"),
     opts = [
       '<option value="all">所有旅程</option>',
@@ -529,8 +555,8 @@ function renderFilter() {
       ),
       '<option value="unfiled">未歸檔</option>',
     ];
-  $("#tripFilter").innerHTML = opts.join("");
-  $("#tripFilter").value = [...$("#tripFilter").options].some(
+  filter.innerHTML = opts.join("");
+  filter.value = [...filter.options].some(
     (o) => o.value === want,
   )
     ? want
@@ -539,9 +565,9 @@ function renderFilter() {
       : "all";
 }
 function filtered(includeDate = true) {
-  let tv = $("#tripFilter").value || "all",
-    date = includeDate ? $("#dateFilter").value : "",
-    kw = $("#keyword").value.trim().toLowerCase();
+  let tv = $("#tripFilter")?.value || "all",
+    date = includeDate ? $("#dateFilter")?.value || "" : "",
+    kw = ($("#keyword")?.value || "").trim().toLowerCase();
   return records.filter(
     (r) =>
       (tv === "all" || (tv === "unfiled" ? !r.tripId : r.tripId === tv)) &&
@@ -556,15 +582,17 @@ function renderStats() {
   let rs = tripRecs(),
     today = rs.filter((r) => r.date === iso()).reduce((s, r) => s + r.total, 0),
     sum = rs.reduce((s, r) => s + r.total, 0);
-  $("#today").textContent = yen(today);
-  $("#tripTotal").textContent = yen(sum);
-  $("#count").textContent = rs.length;
+  if ($("#today")) $("#today").textContent = yen(today);
+  if ($("#tripTotal")) $("#tripTotal").textContent = yen(sum);
+  if ($("#count")) $("#count").textContent = rs.length;
 }
 function renderDaily() {
+  let daily = $("#daily");
+  if (!daily) return;
   let m = {};
   filtered(false).forEach((r) => (m[r.date] = (m[r.date] || 0) + r.total));
   let ds = Object.keys(m).sort().reverse();
-  $("#daily").innerHTML = ds.length
+  daily.innerHTML = ds.length
     ? ds
         .map(
           (d) =>
@@ -594,10 +622,12 @@ function itemList(items = []) {
   return `<ul class="itemlist">${rows(vis)}</ul>${hid.length ? `<details class="more"><summary><span>展開其餘 ${hid.length} 項</span><i data-lucide="chevron-down"></i></summary><ul class="itemlist">${rows(hid)}</ul></details>` : ""}`;
 }
 function renderList() {
+  let recordsEl = $("#records");
+  if (!recordsEl) return;
   let rs = filtered().sort((a, b) =>
     (b.date + b.createdAt).localeCompare(a.date + a.createdAt),
   );
-  $("#records").innerHTML = rs.length
+  recordsEl.innerHTML = rs.length
     ? rs
         .map(
           (r) =>
@@ -641,102 +671,49 @@ function saveExpense() {
     `已儲存旅費：${r.store} ${yen(r.total)}${r.tripId ? "，已歸檔至 " + r.tripName : "，尚未歸檔至旅程"}`,
   );
 }
-function exportCsv() {
-  if (!records.length) return setStatus("目前沒有資料可匯出");
-  let rows = [
-    [
-      "旅程名稱",
-      "旅程開始",
-      "旅程結束",
-      "消費日期",
-      "消費地點",
-      "旅費總額",
-      "交易明細",
-      "明細金額",
-    ],
-  ];
-  records.forEach((r) =>
-    (r.items?.length ? r.items : [{}]).forEach((i) =>
-      rows.push([
-        r.tripName || "未歸檔",
-        r.tripStart || "",
-        r.tripEnd || "",
-        r.date,
-        r.store,
-        r.total,
-        i.name || "",
-        i.price || "",
-      ]),
-    ),
-  );
-  let csv =
-      "\ufeff" +
-      rows
-        .map((r) =>
-          r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(","),
-        )
-        .join("\n"),
-    a = document.createElement("a");
-  a.href = URL.createObjectURL(
-    new Blob([csv], { type: "text/csv;charset=utf-8" }),
-  );
-  a.download = `jp-trip-expenses-${iso()}.csv`;
-  a.click();
-  setStatus("CSV 已匯出");
-}
-$("#photo").onchange = (e) => ocrFile(e.target.files[0]);
-$("#demo").onclick = () => {
+bind("#photo", "onchange", (e) => ocrFile(e.target.files[0]));
+bind("#demo", "onclick", () => {
   $("#ocr").value = sample();
   progress(100, "已載入範例");
   fillDraft(parseReceipt($("#ocr").value));
-};
-$("#parse").onclick = () =>
+});
+bind("#parse", "onclick", () =>
   $("#ocr").value.trim()
     ? fillDraft(parseReceipt($("#ocr").value))
-    : setStatus("沒有可解析的 OCR 文字");
-$("#reset").onclick = () => {
+    : setStatus("沒有可解析的辨識文字"));
+bind("#reset", "onclick", () => {
   draftImg = "";
   $("#preview").removeAttribute("src");
   $("#imageBox").classList.remove("has");
   $("#ocr").value = "";
-  progress(0, "等待旅費收據照片");
+  progress(0, "");
   fillDraft();
-};
-$("#add").onclick = () => row();
-$("#saveTrip").onclick = saveTrip;
-$("#save").onclick = saveExpense;
-$("#export").onclick = exportCsv;
-$("#clear").onclick = () =>
-  records.length &&
-  confirm("確定要清除所有旅遊消費紀錄嗎？") &&
-  (records.forEach((record) => deletedIds.add(record.id)),
-  saveDeletedLS(),
-  (records = []),
-  saveLS(),
-  render(),
-  setStatus("已清除所有旅遊消費紀錄"));
-$("#tripFilter").onchange = () => {
+});
+bind("#add", "onclick", () => row());
+bind("#saveTrip", "onclick", saveTrip);
+bind("#save", "onclick", saveExpense);
+bind("#tripFilter", "onchange", () => {
   $("#tripFilter").dataset.pref = $("#tripFilter").value;
   renderDaily();
   renderList();
-};
-$("#dateFilter").onchange = renderList;
-$("#keyword").oninput = () => {
+});
+bind("#dateFilter", "onchange", renderList);
+bind("#keyword", "oninput", () => {
   renderDaily();
   renderList();
-};
-$("#clearFilter").onclick = () => {
+});
+bind("#clearFilter", "onclick", () => {
   $("#dateFilter").value = "";
   $("#keyword").value = "";
   setTripFilter(trip ? trip.id : "all");
   renderDaily();
   renderList();
-};
-$("#syncConnect").onclick = connectSync;
-$("#syncNow").onclick = () => syncNow();
-$("#syncDisconnect").onclick = disconnectSync;
-$("#total").oninput = hint;
-fillDraft();
+});
+bind("#syncConnect", "onclick", connectSync);
+bind("#syncNow", "onclick", () => syncNow());
+bind("#syncDisconnect", "onclick", disconnectSync);
+bind("#total", "oninput", hint);
+if ($("#items")) fillDraft();
 render();
 renderSync();
 if (syncState?.spaceId) queueSync();

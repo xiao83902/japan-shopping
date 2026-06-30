@@ -3,35 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f3f7f5" />
-    <title>日本旅遊消費紀錄</title>
+    <meta name="theme-color" content="#f6f5f1" />
+    <title>掃描辨識｜日本旅遊消費紀錄</title>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body data-page="scan">
     <div class="app">
       <aside class="side">
-        <div class="brand">
+        <a class="brand" href="./" aria-label="日本旅遊消費">
           <span class="mark"><i data-lucide="receipt-text"></i></span>
-          <div>
-            <div class="brand-title">日本旅遊消費</div>
-            <div class="brand-sub">Trip receipt log</div>
-          </div>
-        </div>
-        <label class="capture"
-          ><input
-            id="photo"
-            type="file"
-            accept="image/*"
-            capture="environment"
-          /><span class="capicon"><i data-lucide="camera"></i></span
-          ><span
-            ><strong>掃描旅費收據</strong><small>Camera / Upload</small></span
-          ></label
-        ><button id="demo" class="btn" type="button">
-          <i data-lucide="sparkles"></i><span>載入範例</span>
-        </button>
+          <span>
+            <span class="brand-title">日本旅遊消費</span>
+            <span class="brand-sub">旅程收據管理</span>
+          </span>
+        </a>
+        <nav class="nav" aria-label="主要頁面">
+          <a class="navlink active" href="./">
+            <i data-lucide="scan-line"></i><span>掃描辨識</span>
+          </a>
+          <a class="navlink" href="./history.html">
+            <i data-lucide="search"></i><span>歷史查詢</span>
+          </a>
+        </nav>
         <section class="syncbox" aria-label="跨裝置同步">
           <div class="sync-head">
             <span id="syncDot" class="sync-dot" aria-hidden="true"></span>
@@ -66,40 +61,38 @@
             </button>
           </div>
         </section>
-        <div class="stats">
+        <div class="stats" aria-label="旅程統計">
           <div class="stat">
-            <span><small>今日旅費</small><em>Trip day</em></span
-            ><strong id="today">¥0</strong>
+            <span><small>今日旅費</small><em>目前日期</em></span>
+            <strong id="today">¥0</strong>
           </div>
           <div class="stat">
-            <span><small>旅程總額</small><em>Trip total</em></span
-            ><strong id="tripTotal">¥0</strong>
+            <span><small>旅程總額</small><em>目前旅程</em></span>
+            <strong id="tripTotal">¥0</strong>
           </div>
           <div class="stat">
-            <span><small>收據筆數</small><em>Receipts</em></span
-            ><strong id="count">0</strong>
+            <span><small>收據筆數</small><em>已歸檔</em></span>
+            <strong id="count">0</strong>
           </div>
         </div>
       </aside>
       <main class="main">
-        <header class="top row">
+        <header class="top scan-top">
           <div>
-            <span class="kicker">Travel Expense Scan</span>
-            <h1>旅費收據掃描</h1>
-            <p id="status" aria-live="polite">等待照片</p>
+            <h1>掃描辨識</h1>
+            <p id="status" class="statusline" aria-live="polite"></p>
           </div>
-          <div class="actions">
-            <button id="export" class="icon text" type="button">
-              <i data-lucide="download"></i><span>CSV</span></button
-            ><button
-              id="clear"
-              class="icon danger"
-              type="button"
-              title="清除所有旅遊消費紀錄"
-            >
-              <i data-lucide="trash-2"></i>
-            </button>
-          </div>
+          <label class="capture"
+            ><input
+              id="photo"
+              type="file"
+              accept="image/*"
+              capture="environment"
+            /><span class="capicon"><i data-lucide="camera"></i></span
+            ><span
+              ><strong>拍攝收據</strong><small>手機可直接開啟相機</small></span
+            ></label
+          >
         </header>
         <section class="panel trip">
           <div class="title">
@@ -121,7 +114,7 @@
           <div id="tripSummary" class="summary"></div>
         </section>
         <section class="grid work">
-          <section class="panel">
+          <section class="panel scan-panel">
             <div class="title">
               <span><i data-lucide="image-up"></i></span>
               <h2>照片與文字</h2>
@@ -129,7 +122,7 @@
             <div id="imageBox" class="image">
               <img id="preview" alt="收據照片預覽" />
               <div class="empty">
-                <i data-lucide="image-up"></i><span>Receipt Photo</span>
+                <i data-lucide="image-up"></i><span>尚未選擇收據照片</span>
               </div>
             </div>
             <div class="progress">
@@ -140,20 +133,22 @@
               id="ocr"
               class="ocr"
               spellcheck="false"
-              placeholder="OCR 文字會出現在這裡，可直接修正後重新解析旅費內容。"
+              placeholder="辨識文字會出現在這裡，可修正後重新解析。"
             ></textarea>
             <div class="panel-actions row">
-              <button id="parse" class="icon text" type="button">
+              <button id="demo" class="icon text" type="button">
+                <i data-lucide="sparkles"></i><span>載入範例</span></button
+              ><button id="parse" class="icon text" type="button">
                 <i data-lucide="scan-text"></i><span>重新解析</span></button
               ><button id="reset" class="icon text" type="button">
                 <i data-lucide="rotate-ccw"></i><span>重設草稿</span>
               </button>
             </div>
           </section>
-          <section class="panel">
+          <section class="panel edit-panel">
             <div class="title">
               <span><i data-lucide="clipboard-list"></i></span>
-              <h2>旅遊消費內容</h2>
+              <h2>消費內容</h2>
             </div>
             <div class="grid fields">
               <label><span>消費地點</span><input id="store" /></label
@@ -165,7 +160,7 @@
             </div>
             <div class="items-head">
               <h2>品項</h2>
-              <button id="add" class="icon" type="button">
+              <button id="add" class="icon" type="button" title="新增品項">
                 <i data-lucide="plus"></i>
               </button>
             </div>
@@ -187,32 +182,6 @@
               ><span id="hint"></span>
             </div>
           </section>
-        </section>
-        <section class="records">
-          <div class="title">
-            <div>
-              <span class="kicker">Trip Daily Summary</span>
-              <h2>旅程每日花費</h2>
-            </div>
-          </div>
-          <div class="grid query">
-            <label
-              ><span>旅程</span
-              ><select id="tripFilter"></select></label
-            ><label
-              ><span>日期</span><input id="dateFilter" type="date" /></label
-            ><label
-              ><span>關鍵字</span
-              ><input
-                id="keyword"
-                type="search"
-                placeholder="店家、品項" /></label
-            ><button id="clearFilter" class="icon text" type="button">
-              <i data-lucide="list-restart"></i><span>重設查詢</span>
-            </button>
-          </div>
-          <div id="daily" class="daily"></div>
-          <div id="records" class="list"></div>
         </section>
       </main>
     </div>
